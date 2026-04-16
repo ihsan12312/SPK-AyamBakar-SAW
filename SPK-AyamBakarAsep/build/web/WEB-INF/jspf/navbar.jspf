@@ -1,0 +1,20 @@
+<%-- navbar.jspf – Shared navigation bar for all pages --%>
+<%@ page pageEncoding="UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="${pageContext.request.contextPath}/" class="brand">
+      <img src="${pageContext.request.contextPath}/assets/img/logo.png" alt="Logo Ayam Bakar Asep" class="brand-logo"/>
+      <div class="brand-text">
+        <span class="brand-name">Ayam Bakar Asep</span>
+        <span class="brand-sub">Sistem Pendukung Keputusan</span>
+      </div>
+    </a>
+    <nav class="header-nav">
+      <a href="${pageContext.request.contextPath}/"           class="nav-link" id="nav-home">🏠 Dashboard</a>
+      <a href="${pageContext.request.contextPath}/kriteria"   class="nav-link" id="nav-kriteria">📋 Kriteria</a>
+      <a href="${pageContext.request.contextPath}/alternatif" class="nav-link" id="nav-alternatif">🍽️ Alternatif</a>
+      <a href="${pageContext.request.contextPath}/hasil"      class="nav-link nav-cta" id="nav-hasil">⚡ Hitung SAW</a>
+    </nav>
+  </div>
+</header>

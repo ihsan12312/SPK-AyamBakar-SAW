@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Sistem Pendukung Keputusan Pemilihan Paket Menu Terbaik di Rumah Makan Ayam Bakar Asep menggunakan Metode Simple Additive Weighting (SAW)." />
+  <title>SPK Paket Menu Terbaik – Ayam Bakar Asep</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon">🍗</div>
+        <div class="brand-text">
+          <span class="brand-name">Ayam Bakar Asep</span>
+          <span class="brand-sub">Sistem Pendukung Keputusan</span>
+        </div>
+      </div>
+      <nav class="header-nav">
+        <a href="#criteria" class="nav-link" id="nav-criteria">Kriteria</a>
+        <a href="#alternatives" class="nav-link" id="nav-alternatives">Alternatif</a>
+        <a href="#result" class="nav-link" id="nav-result">Hasil</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-badge">Metode SAW · Simple Additive Weighting</div>
+      <h1 class="hero-title">Pemilihan Paket Menu<br /><span class="gradient-text">Terbaik & Optimal</span></h1>
+      <p class="hero-desc">Temukan rekomendasi paket menu terbaik di Rumah Makan Ayam Bakar Asep berdasarkan bobot kriteria yang Anda tentukan secara interaktif.</p>
+      <button class="btn-primary" id="btn-calculate" onclick="runSAW()">
+        <span class="btn-icon">⚡</span> Hitung Rekomendasi
+      </button>
+    </div>
+    <div class="hero-visual">
+      <div class="food-card-stack">
+        <div class="food-chip fc1">🍗 Paket Hemat</div>
+        <div class="food-chip fc2">🔥 Paket Spesial</div>
+        <div class="food-chip fc3">👑 Paket Premium</div>
+        <div class="food-chip fc4">🌿 Paket Diet</div>
+        <div class="food-chip fc5">👨‍👩‍👦 Paket Keluarga</div>
+      </div>
+    </div>
+  </section>
+
+  <main class="main-content">
+
+    <!-- ===== STEP 1: CRITERIA ===== -->
+    <section class="section-card" id="criteria">
+      <div class="section-header">
+        <div class="step-badge">01</div>
+        <div>
+          <h2 class="section-title">Bobot Kriteria</h2>
+          <p class="section-desc">Atur bobot kepentingan setiap kriteria (total harus 100%). Jenis kriteria: <strong>Benefit</strong> (lebih tinggi lebih baik) atau <strong>Cost</strong> (lebih rendah lebih baik).</p>
+        </div>
+      </div>
+
+      <div class="criteria-grid" id="criteria-grid">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div class="weight-status" id="weight-status">
+        <div class="weight-bar-wrap">
+          <div class="weight-bar-fill" id="weight-bar"></div>
+        </div>
+        <span class="weight-label" id="weight-label">Total Bobot: 0%</span>
+      </div>
+    </section>
+
+    <!-- ===== STEP 2: ALTERNATIVES ===== -->
+    <section class="section-card" id="alternatives">
+      <div class="section-header">
+        <div class="step-badge">02</div>
+        <div>
+          <h2 class="section-title">Data Alternatif Paket Menu</h2>
+          <p class="section-desc">Nilai tiap paket menu pada masing-masing kriteria. Anda dapat mengedit, menambah, atau menghapus paket.</p>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="alt-table" id="alt-table">
+          <thead id="alt-thead"></thead>
+          <tbody id="alt-tbody"></tbody>
+        </table>
+      </div>
+
+      <div class="table-actions">
+        <button class="btn-secondary" onclick="addAlternative()">+ Tambah Paket</button>
+        <button class="btn-outline" onclick="resetToDefault()">↺ Reset Default</button>
+      </div>
+    </section>
+
+    <!-- ===== STEP 3: RESULT ===== -->
+    <section class="section-card" id="result">
+      <div class="section-header">
+        <div class="step-badge">03</div>
+        <div>
+          <h2 class="section-title">Hasil Perhitungan SAW</h2>
+          <p class="section-desc">Ranking paket menu terbaik berdasarkan skor akhir metode Simple Additive Weighting.</p>
+        </div>
+      </div>
+
+      <div id="result-placeholder" class="result-placeholder">
+        <div class="placeholder-icon">📊</div>
+        <p>Klik <strong>"Hitung Rekomendasi"</strong> untuk melihat hasil ranking.</p>
+      </div>
+
+      <div id="result-content" style="display:none;">
+
+        <!-- Winner card -->
+        <div class="winner-card" id="winner-card"></div>
+
+        <!-- Ranking table -->
+        <h3 class="sub-title">📋 Tabel Ranking Lengkap</h3>
+        <div class="table-wrapper">
+          <table class="result-table" id="result-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Paket Menu</th>
+                <th>Harga</th>
+                <th>Skor Akhir (Vi)</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="result-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- Normalized matrix -->
+        <h3 class="sub-title">🔢 Matriks Ternormalisasi (R)</h3>
+        <div class="table-wrapper">
+          <table class="norm-table" id="norm-table"></table>
+        </div>
+
+        <!-- Step-by-step -->
+        <h3 class="sub-title">📐 Langkah-Langkah Perhitungan</h3>
+        <div class="steps-box" id="steps-box"></div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2026 · SPK Ayam Bakar Asep · Metode Simple Additive Weighting (SAW)</p>
+    <p class="footer-sub">Dibangun untuk mendukung pengambilan keputusan yang lebih baik 🍗</p>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
