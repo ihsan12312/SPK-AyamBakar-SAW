@@ -111,6 +111,43 @@ public class HasilDAO {
     }
 
     /**
+     * Mengambil detail hasil dari satu sesi historis.
+     * Tidak mengambil nilaiNormal dan nilaiTerbobot (karena tidak disimpan di DB),
+     * tetapi cukup untuk menampilkan pemenang, tabel ranking, dan grafik.
+     */
+    public List<HasilSAW> getDetailSesi(int idSesi) throws SQLException {
+        List<HasilSAW> list = new ArrayList<>();
+        String sql = "SELECT h.ranking, h.skor_akhir, "
+                   + "       a.id_alternatif, a.nama_paket, a.harga, a.deskripsi "
+                   + "FROM tb_hasil h "
+                   + "JOIN tb_alternatif a ON h.id_alternatif = a.id_alternatif "
+                   + "WHERE h.id_sesi = ? "
+                   + "ORDER BY h.ranking ASC";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idSesi);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Alternatif alt = new Alternatif();
+                    alt.setIdAlternatif(rs.getInt("id_alternatif"));
+                    alt.setNamaPaket(rs.getString("nama_paket"));
+                    alt.setHarga(rs.getInt("harga"));
+                    alt.setDeskripsi(rs.getString("deskripsi"));
+                    
+                    HasilSAW h = new HasilSAW();
+                    h.setRanking(rs.getInt("ranking"));
+                    h.setSkorAkhir(rs.getDouble("skor_akhir"));
+                    h.setAlternatif(alt);
+                    // nilaiNormal dan nilaiTerbobot otomatis null
+                    
+                    list.add(h);
+                }
+            }
+        }
+        return list;
+    }
+
+    /**
      * Menghapus satu sesi dan semua hasilnya (CASCADE).
      */
     public int deleteSesi(int idSesi) throws SQLException {

@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -9,6 +10,7 @@
   <title>Hasil SAW – SPK Ayam Bakar Asep</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -66,10 +68,17 @@
       </div>
       <div class="winner-score-box">
         <div class="ws-label">Skor (Vi)</div>
-        <div class="ws-value"><fmt:formatNumber value="${terbaik.skorAkhir * 100}" maxFractionDigits="1"/></div>
-        <div class="ws-sub">dari 100</div>
+        <div class="ws-value"><fmt:formatNumber value="${terbaik.skorAkhir}" pattern="0.0000"/></div>
       </div>
     </div>
+
+    <%-- CHART.JS SECTION --%>
+    <section class="section-card">
+      <div class="section-head"><h2>📊 Grafik Skor Akhir (Vi)</h2></div>
+      <div style="position: relative; height:400px; width:100%; margin-top:20px;">
+        <canvas id="sawChart"></canvas>
+      </div>
+    </section>
 
     <%-- RANKING TABLE --%>
     <section class="section-card">
@@ -115,6 +124,7 @@
       </div>
     </section>
 
+    <c:if test="${empty isHistory}">
     <%-- MATRIKS TERNORMALISASI --%>
     <section class="section-card">
       <div class="section-head"><h2>🔢 Matriks Ternormalisasi (R)</h2></div>
@@ -132,7 +142,7 @@
             <c:forEach var="h" items="${hasilSAW}">
             <tr>
               <td><strong>${h.alternatif.namaPaket}</strong></td>
-              <c:forEach begin="0" end="${h.nilaiNormal.length - 1}" var="j">
+              <c:forEach begin="0" end="${fn:length(h.nilaiNormal) - 1}" var="j">
                 <c:set var="r" value="${h.nilaiNormal[j]}"/>
                 <td class="${r >= 0.999 ? 'cell-hi' : r <= 0.5 ? 'cell-lo' : ''}">
                   <fmt:formatNumber value="${r}" pattern="0.0000"/>
@@ -215,6 +225,7 @@
 
       </div>
     </section>
+    </c:if>
 
   </c:if><%-- end hasilSAW --%>
 
@@ -247,6 +258,7 @@
             <td><fmt:formatNumber value="${row[4]}" pattern="0.0000"/></td>
             <td><fmt:formatDate value="${row[2]}" pattern="dd/MM/yyyy HH:mm"/></td>
             <td>
+              <a href="${pageContext.request.contextPath}/hasil?view_sesi=${row[0]}" class="btn-icon" style="background:#4b5563;color:white;text-decoration:none;font-size:12px;padding:6px 12px;border-radius:4px;margin-right:8px;" title="Lihat Grafik">📊 Lihat</a>
               <form method="post" action="${pageContext.request.contextPath}/hasil"
                     style="display:inline"
                     onsubmit="return confirm('Hapus sesi ini?')">
@@ -267,5 +279,69 @@
 
 <%@ include file="WEB-INF/jspf/footer.jspf" %>
 <script src="${pageContext.request.contextPath}/assets/js/app.js"></script>
+
+<c:if test="${not empty hasilSAW}">
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const ctx = document.getElementById('sawChart').getContext('2d');
+    
+    // Siapkan data dari backend (JSP ke Array JS)
+    const labels = [
+      <c:forEach var="h" items="${hasilSAW}">"${h.alternatif.namaPaket}",</c:forEach>
+    ];
+    const dataScores = [
+      <c:forEach var="h" items="${hasilSAW}">${h.skorAkhir},</c:forEach>
+    ];
+    
+    // Agar chart menarik, kita buat warna gradasi dinamis atau setidaknya warna yang pas untuk dark mode
+    const chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Skor Vi Akhir',
+          data: dataScores,
+          backgroundColor: 'rgba(251, 146, 60, 0.8)', // Orange-400 theme
+          borderColor: 'rgba(234, 88, 12, 1)',
+          borderWidth: 1,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 1.0, // rentang 0-1 untuk skor ternormalisasi
+            ticks: { color: '#9ca3af' },
+            grid: { color: 'rgba(75, 85, 99, 0.3)' }
+          },
+          x: {
+            ticks: { color: '#e5e7eb', font: { weight: 'bold' } },
+            grid: { display: false }
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(17, 24, 39, 0.9)',
+            titleColor: '#f9fafb',
+            bodyColor: '#f9fafb',
+            padding: 12,
+            displayColors: false,
+            callbacks: {
+              label: function(context) {
+                return 'Skor: ' + context.formattedValue;
+              }
+            }
+          }
+        }
+      }
+    });
+  });
+</script>
+</c:if>
+
 </body>
 </html>

@@ -28,7 +28,7 @@ import java.util.List;
  * Layer    : Controller (Servlet)
  * Package  : controller
  */
-@WebServlet(name = "IndexServlet", urlPatterns = {"/", "/index"})
+@WebServlet(name = "IndexServlet", urlPatterns = {"", "/index"})
 public class IndexServlet extends HttpServlet {
 
     @Override

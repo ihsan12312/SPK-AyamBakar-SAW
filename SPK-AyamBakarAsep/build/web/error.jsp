@@ -13,8 +13,12 @@
 <main class="main-wrap">
   <div class="result-placeholder" style="min-height:50vh">
     <div class="ph-icon">⚠️</div>
-    <h2 style="color:var(--red)">Terjadi Kesalahan</h2>
+    <h2 style="color:var(--red)">Terjadi Kesalahan (Status: <%= request.getAttribute("javax.servlet.error.status_code") %>)</h2>
     <p>Halaman tidak ditemukan atau terjadi error di server.</p>
+    <div style="background:#2d2d2d; padding:10px; border-radius:5px; margin-top:10px; font-size:12px; color:#ff9999; text-align:left; overflow:auto;">
+      <strong>Error Message:</strong> <%= request.getAttribute("javax.servlet.error.message") %><br/>
+      <strong>Exception:</strong> <%= request.getAttribute("javax.servlet.error.exception") %>
+    </div>
     <a href="${pageContext.request.contextPath}/" class="btn-primary" style="margin-top:14px">
       🏠 Kembali ke Dashboard
     </a>

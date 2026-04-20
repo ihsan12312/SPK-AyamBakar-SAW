@@ -50,15 +50,27 @@ public class HasilServlet extends HttpServlet {
             req.setAttribute("riwayat",        hasilDAO.getRiwayatSesi(10));
             req.setAttribute("totalBobot",     critDAO.getTotalBobot());
 
-            // Jika ada hasil di session (baru dihitung), pindahkan ke request
-            if (req.getSession().getAttribute("hasilSAW") != null) {
+            // Jika ada param view_sesi, load dari history
+            String viewSesi = req.getParameter("view_sesi");
+            if (viewSesi != null && !viewSesi.isEmpty()) {
+                int idSesiView = Integer.parseInt(viewSesi);
+                List<HasilSAW> historyHasil = hasilDAO.getDetailSesi(idSesiView);
+                if (!historyHasil.isEmpty()) {
+                    req.setAttribute("hasilSAW", historyHasil);
+                    req.setAttribute("idSesi", idSesiView);
+                    req.setAttribute("isHistory", true);
+                } else {
+                    req.setAttribute("error", "Data sesi tidak ditemukan.");
+                }
+            } else if (req.getSession().getAttribute("hasilSAW") != null) {
+                // Jika ada hasil di session (baru dihitung), pindahkan ke request
                 req.setAttribute("hasilSAW",   req.getSession().getAttribute("hasilSAW"));
                 req.setAttribute("idSesi",     req.getSession().getAttribute("idSesi"));
                 req.getSession().removeAttribute("hasilSAW");
                 req.getSession().removeAttribute("idSesi");
             }
 
-        } catch (SQLException e) {
+        } catch (SQLException | NumberFormatException e) {
             req.setAttribute("error", "Error: " + e.getMessage());
         }
 

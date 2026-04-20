@@ -247,7 +247,7 @@ function renderResults(ranked, R, X, refVal, W, V) {
     </div>
     <div class="winner-score-box">
       <div class="winner-score-label">Skor Vi</div>
-      <div class="winner-score-val">${(best.score * 100).toFixed(1)}</div>
+      <div class="winner-score-val">${(best.score).toFixed(4)}</div>
     </div>
   `;
 
